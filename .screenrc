@@ -1,3 +1,5 @@
+defscrollback 100000
+
 screen -t "Tab 1" -T
 screen -t "Tab 2" -T
 
