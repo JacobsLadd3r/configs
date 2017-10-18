@@ -3,6 +3,26 @@
 source ~/.vim/plugins/setcolors.vim "| setcolors - F8 cycles colorschemes
                                     "| :SetColors all - use all installed
 
+" Only do this part when compiled with support for autocommands
+if has("autocmd")
+  augroup fedora
+  autocmd!
+  autocmd BufWinLeave * mkview          " save folds when exiting
+  autocmd BufWinEnter * silent loadview " load folds when opening
+  " In text files, always limit the width of text to 78 characters
+  " autocmd BufRead *.txt set tw=78
+  " When editing a file, always jump to the last cursor position
+  autocmd BufReadPost *
+  \ if line("'\"") > 0 && line ("'\"") <= line("$") |
+  \   exe "normal! g'\"" |
+  \ endif
+  " don't write swapfile on most commonly used directories for NFS mounts or USB sticks
+  autocmd BufNewFile,BufReadPre /media/*,/run/media/*,/mnt/* set directory=~/tmp,/var/tmp,/tmp
+  " start with spec file template
+  autocmd BufNewFile *.spec 0r /usr/share/vim/vimfiles/template.spec
+  augroup END
+endif
+
 set relativenumber " show relative numbers for line number
 
 set paste    " always be ready to paste formatted blocks
@@ -10,13 +30,12 @@ set t_Co=256 " enable 256 bit colors
 set showcmd  " show command
 set list
 set listchars=tab:▸\ ,eol:¬
+set hlsearch " highlight searches
 
 syntax on    " syntax highlighting enabled
 colorscheme pablo "pablo color by default
 highlight Normal cterm=bold ctermfg=7 ctermbg=0
 
-autocmd BufWinLeave *.* mkview          " save folds when exiting
-autocmd BufWinEnter *.* silent loadview " load folds when opening
 
 set wildmode=longest,list,full " tab once to start to autocomplete commands,
 set wildmenu                   " again ls style list, once more for everything
